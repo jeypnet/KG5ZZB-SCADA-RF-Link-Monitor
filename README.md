@@ -45,7 +45,7 @@ For each channel, over the last 20 seconds:
 - **Alarm log:** every alarm raised or cleared is appended as one JSON line to `%APPDATA%\KG5ZZB-SCADA-RF-Link-Monitor\alarms.jsonl`; **Export alarms** writes CSV.
 
 ### 🎬 Try it without hardware
-**Try the demo** (or start with `--demo`) runs a pretend SCADA network: five polled channels (three UHF, two MAS-style) with 3-6 RTUs each. At 50 s an interferer appears (band-limited noise on one channel plus an unexpected carrier); at 80 s RTU 3 on "MAS pipeline remotes" stops answering. The demo renders real I/Q samples, so it runs through exactly the same DSP, tracking, model and alarm code as a real dongle.
+**Try the demo** (or start with `--demo`) plays a built-in SCADA network: five polled channels (three UHF, two MAS-style) with 3-6 RTUs each. At 50 s an interferer appears (band-limited noise on one channel plus an unexpected carrier); at 80 s RTU 3 on "MAS pipeline remotes" stops answering. The demo renders real I/Q samples, so it runs through exactly the same DSP, tracking, model and alarm code as a real dongle.
 
 ---
 
@@ -53,12 +53,12 @@ For each channel, over the last 20 seconds:
 
 ```
 DatasetGen (C#)                       train.py (Python, PyTorch)               App (C#, ONNX Runtime)
-simulate polled radio networks   ->   autoencoder on healthy windows only  ->  embedded link_autoencoder.onnx
+model polled radio networks     ->   autoencoder on healthy windows only  ->  embedded link_autoencoder.onnx
 listen like the app (0.4 s dwells)    limit = 99th percentile (validation)     score + per-feature explanation
 measure with the app's tracker        evaluate vs threshold rules              every 2 s per channel
 ```
 
-- **Data:** a C# dataset generator simulates polled channels (a master polling 2-10 RTUs; poll, reply, turnaround and gap timings; retries; 0-3% normal reply loss; 8-32 dB links with slow fading; 12.5 or 25 kHz channels), listens the way the app does (sharing the dongle with up to four other tuning positions), and measures each 20 s window with the app's own `ChannelTracker`. Training uses healthy windows only; the test set adds seven fault types: broadband interference, in-channel interference, a steady carrier, one RTU silent, the whole channel silent, a fading link and a babbling RTU.
+- **Data:** a C# dataset generator models polled channels (a master polling 2-10 RTUs; poll, reply, turnaround and gap timings; retries; 0-3% normal reply loss; 8-32 dB links with slow fading; 12.5 or 25 kHz channels), listens the way the app does (sharing the dongle with up to four other tuning positions), and measures each 20 s window with the app's own `ChannelTracker`. Training uses healthy windows only; the test set adds seven fault types: broadband interference, in-channel interference, a steady carrier, one RTU silent, the whole channel silent, a fading link and a babbling RTU.
 - **Fast and faithful:** windows are generated at the FFT-frame level (thousands per minute). A unit test runs the same scenarios through full I/Q rendering, 8-bit quantisation and the real FFT path and checks that both give the same bursts, SNR and noise rise.
 - **Training:** a PyTorch training script: standardisation folded into the graph, MSE reconstruction loss, Adam, early stopping, anomaly limit at the 99th percentile of held-out healthy windows.
 - **Results on the held-out test set (11,000 windows, separate seed):**
@@ -80,11 +80,11 @@ The autoencoder's gain is on faults that change the *shape* of traffic without c
 | Tuning | Channel list parsing, presets, tuning plan (fewest positions, clear of DC) |
 | DSP | Hann-windowed FFT, per-channel power series, band floor, steady-carrier finder |
 | Tracking | Calibrated noise estimate, burst detection with hysteresis, poll/reply pairing, references, 12-feature window |
-| Machine learning | Simulation-based dataset, PyTorch autoencoder, ONNX export, ONNX Runtime inference, explanations |
+| Machine learning | Training-data generator, PyTorch autoencoder, ONNX export, ONNX Runtime inference, explanations |
 | Decision | Plain-language rules, anomaly limit, alarm persistence, Learn this site |
 | Engine | Dwell loop on its own thread, 2 s checks |
 | Integration | MQTT publisher, Modbus TCP server and register map, JSON Lines / CSV alarm log |
-| Simulation | Polling networks, interferers, I/Q renderer, frame-level simulator, demo scenario and dongle |
+| Demo engine | Polling networks, interferers, I/Q renderer, frame-level model, demo scenario and dongle |
 | UI | WPF: status banner, per-channel traffic timeline, spectrum, link table with plain-language explanations, alarm log |
 
 ## Recommended hardware

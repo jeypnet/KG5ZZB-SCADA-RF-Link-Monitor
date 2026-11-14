@@ -14,12 +14,12 @@ The app also runs plain threshold rules (silent channel, noise rise, busy channe
 polls, weak signal, traffic change). The model adds the patterns that fixed limits miss.
 
 ## Data
-- **Source:** a C# dataset generator simulates polled telemetry channels: a master polling 2-10
+- **Source:** a C# dataset generator models polled telemetry channels: a master polling 2-10
   RTUs in turn (poll 15-55 ms, replies 25-145 ms, turnaround 8-55 ms, retries 0-2, normal reply
   loss 0-3%, RTU links 8-32 dB SNR with slow fading), 12.5 or 25 kHz channels. The channel is
   listened to the way the app does it (0.4 s dwells, sharing the dongle with 0-4 other tuning
   positions). Each window is measured by the app's own `ChannelTracker` from per-frame channel
-  power; a test checks this frame-level simulation against the full I/Q + FFT path.
+  power; a test checks this frame-level model against the full I/Q + FFT path.
 - **Training set:** seed 1, 16000 healthy windows (13600 train / 2400 validation).
   The model never sees a fault while training.
 - **Test set:** seed 2, 11000 windows: 4000 healthy and
