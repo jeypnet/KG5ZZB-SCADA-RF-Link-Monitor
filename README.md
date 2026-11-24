@@ -2,6 +2,8 @@
 
 ![SCADA RF Link Monitor: radio link health for RTU telemetry with SDR, anomaly detection, MQTT and Modbus](docs/cover.png)
 
+[![Connect on LinkedIn](https://img.shields.io/badge/Connect_on_LinkedIn-0A66C2?style=for-the-badge)](https://www.linkedin.com/in/jeypnet/)
+
 <img src="docs/icon.png" width="96" align="right" alt="App icon: a teal radio tower with signal arcs">
 
 **Passive health monitoring for SCADA telemetry radio links on Windows: an RTL-SDR listens to the channels your RTUs and PLC radios use, an autoencoder (PyTorch, ONNX Runtime) flags unusual traffic, and link health goes to your SCADA over MQTT and Modbus TCP.**
@@ -110,6 +112,9 @@ The autoencoder's gain is on faults that change the *shape* of traffic without c
 ## Source code
 This repository is the public showcase: description, results, model card and images.
 The source code is private. Technical walkthroughs are available on request.
+
+## Contact
+Into ham radio, RF, SDR or aviation? **[Let's connect on LinkedIn](https://www.linkedin.com/in/jeypnet/)**. I share new radio apps, RF projects and what I learn along the way.
 
 ## License
 Copyright (c) 2026 KG5ZZB. All rights reserved. Text and images may not be reused without permission.
